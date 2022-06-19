@@ -86,18 +86,5 @@ extension ExpenseLog {
             return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         }
     }
-    
-    static func predicate(startDate: Date, endDate: Date) -> NSPredicate? {
-        var predicates = [NSPredicate]()
-        
-        predicates.append(NSPredicate(format: "(date >= %@) AND (date <= %@)", startDate as NSDate, endDate as NSDate))
-        
-        if predicates.isEmpty {
-            return nil
-        } else {
-            return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
-        }
-    }
-    
 }
 

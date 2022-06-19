@@ -22,7 +22,7 @@ class MonthlySummaryViewModel: ObservableObject {
     func geRangeByDate(startDate: Date, endDate: Date) {
         let request = NSFetchRequest<ExpenseLog>(entityName: "ExpenseLog")
         request.sortDescriptors = [NSSortDescriptor(keyPath: \ExpenseLog.date, ascending: false)]
-        if let predicate = ExpenseLog.predicate(startDate: startDate, endDate: endDate) {
+        if let predicate = filter(startDate: startDate, endDate: endDate) {
             request.predicate = predicate
         }
         do {
@@ -31,5 +31,18 @@ class MonthlySummaryViewModel: ObservableObject {
         } catch {
             print("Error getting data. \(error.localizedDescription)")
         }
+    }
+    
+    private func filter(startDate : Date, endDate: Date) -> NSPredicate? {
+        var predicates = [NSPredicate]()
+        var dayComponent = DateComponents()
+        dayComponent.day = -1
+        let dayBeforeStartDate = Calendar.current.date(byAdding: dayComponent, to: startDate)
+        let to: NSDate = endDate as NSDate
+        guard let from = dayBeforeStartDate as NSDate? else{ return nil }
+        
+        predicates.append(NSPredicate(format: "(date <= %@)", to))
+        predicates.append(NSPredicate(format: "(date >= %@)", from))
+        return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
 }

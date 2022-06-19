@@ -33,7 +33,11 @@ class DashboardViewModel: ObservableObject {
     
     func fetchTotalSums(rate: Double = 1) {
         ExpenseLog.fetchAllCategoriesTotalAmountSum(context: CoreDataStack.shared.viewContext) { [unowned self] (results) in
-            guard !results.isEmpty else { return }
+            guard !results.isEmpty else {
+                totalExpenses = nil
+                categoriesSum = nil
+                return
+            }
             currencySign = currencyType == .usd ? "$" : "€"
             let totalSum = results.map { $0.sum }.reduce(0, +) * rate
             totalExpenses = totalSum
